@@ -11,17 +11,20 @@ Utilice el archivo `data.csv` para resolver las preguntas.
 
 
 """
+def extract_table(path="./data.csv"):
+    with open("./data.csv", "r") as file:
+        datos = file.readlines()
+        datos = list(map(lambda x:x.replace("\t", ".").split('.') ,datos))
+    return datos
 
-
-def pregunta_01():
+def pregunta_01(path="./data.csv"):
     """
     Retorne la suma de la segunda columna.
-
-    Rta/
-    214
-
+    
     """
-    return
+    datos=extract_table()
+    c=sum(list(map(int, list(zip(*datos))[1])))
+    return(c)
 
 
 def pregunta_02():
@@ -39,7 +42,11 @@ def pregunta_02():
     ]
 
     """
-    return
+    datos=extract_table()
+    contar=[]
+    for i in sorted(set(list(list(zip(*datos))[0]))):
+        contar.append((i, list(list(zip(*datos))[0]).count(i)))
+    return contar
 
 
 def pregunta_03():
@@ -57,7 +64,13 @@ def pregunta_03():
     ]
 
     """
-    return
+    import itertools
+    datos=extract_table()
+    key_and_sum=[]
+    an_iterator=itertools.groupby(sorted(datos), lambda x:x[0])
+    for key, group in an_iterator:
+        key_and_sum.append((key,sum((list(map(lambda x: int(x[1]) ,list(group)))))))
+    return key_and_sum
 
 
 def pregunta_04():
@@ -82,7 +95,12 @@ def pregunta_04():
     ]
 
     """
-    return
+    datos=extract_table()
+    meses=list(map(lambda x: x[2].split('-')[1], datos))
+    mes=[]
+    for i in sorted(set(meses)):
+        mes.append((i,meses.count(i)))
+    return mes
 
 
 def pregunta_05():
@@ -100,7 +118,14 @@ def pregunta_05():
     ]
 
     """
-    return
+    import itertools
+    datos=extract_table()
+    key_min_max=[]
+    an_iterator=itertools.groupby(sorted(datos), lambda x:x[0])
+    for key, group in an_iterator:
+        g=list(group)
+        key_min_max.append((key,max((list(map(lambda x: int(x[1]) ,g)))),min((list(map(lambda x: int(x[1]) ,g))))))
+    return key_min_max
 
 
 def pregunta_06():
@@ -125,7 +150,18 @@ def pregunta_06():
     ]
 
     """
-    return
+    import itertools
+    datos=extract_table()
+    col5=list(itertools.chain.from_iterable(list(map(lambda y: y.split(','), 
+                                                     list(map(lambda x: x.split("\n")[0], list(zip(*datos))[4]))))))
+    an_iterator=itertools.groupby(sorted(col5), lambda x:x.split(':')[0])
+    letter=[]
+    for key, group in an_iterator:
+        dat=list(group)
+        letter.append((key, 
+                       min(list(map(lambda x:int(x.split(':')[1]), dat))), 
+                       max(list(map(lambda x:int(x.split(':')[1]), dat)))))
+    return letter
 
 
 def pregunta_07():
@@ -149,7 +185,13 @@ def pregunta_07():
     ]
 
     """
-    return
+    datos=extract_table()
+    number=[]
+    for i in sorted(set(list(map(lambda x: int(x[1]),datos)))):
+        letter=[]
+        filterdata=list(map(lambda x: letter.append(x[0]) if (x[1]==str(i)) else None,datos))
+        number.append((i, letter))
+    return number
 
 
 def pregunta_08():
@@ -174,7 +216,10 @@ def pregunta_08():
     ]
 
     """
-    return
+    number=pregunta_07()
+    s=[]
+    list(map(lambda x: s.append((x[0], sorted(set(x[1])))),number))
+    return s
 
 
 def pregunta_09():
@@ -197,7 +242,16 @@ def pregunta_09():
     }
 
     """
-    return
+    import itertools
+    datos=extract_table()
+    col5=list(itertools.chain.from_iterable(list(map(lambda y: y.split(','), 
+                                                     list(map(lambda x: x.split("\n")[0], list(zip(*datos))[4]))))))
+    an_iterator=itertools.groupby(sorted(col5), lambda x:x.split(':')[0])
+    nletter={}
+    for key, group in an_iterator:
+        dat=list(group)
+        nletter[key]=len(dat)
+    return nletter
 
 
 def pregunta_10():
@@ -218,7 +272,10 @@ def pregunta_10():
 
 
     """
-    return
+    datos=extract_table()
+    lendat=[]
+    list(map(lambda x: lendat.append((x[0],len(x[3].split(',')),len(x[4].split(',')))), datos)) 
+    return lendat
 
 
 def pregunta_11():
@@ -239,7 +296,15 @@ def pregunta_11():
 
 
     """
-    return
+    import itertools
+    datos=extract_table()
+    col4=list(itertools.chain.from_iterable(list(map(lambda y: y.split(','), 
+                                                         list(map(lambda x: x.split("\n")[0], list(zip(*datos))[3]))))))
+    dictionary={}
+    for i in sorted(set(col4)):
+        dictionary[i]=sum(list(map(lambda x: int(x[1]), filter(lambda x: True if i in x[3].split(',') else False, datos))))
+
+    return dictionary
 
 
 def pregunta_12():
@@ -257,4 +322,13 @@ def pregunta_12():
     }
 
     """
-    return
+    import itertools
+    datos=extract_table()
+    key_sum4={}
+    an_iterator=itertools.groupby(sorted(datos), lambda x:x[0])
+    for key, group in an_iterator:
+        suma=0
+        for j in list(map(lambda y:y[4].split(','), list(group))):
+            suma=suma+sum(list(map(lambda x: int(x.split(':')[1].replace('\n','')), j)))
+        key_sum4[key]=suma
+    return key_sum4
